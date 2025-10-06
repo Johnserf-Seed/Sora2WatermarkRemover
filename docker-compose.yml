@@ -1,0 +1,38 @@
+services:
+  watermark-remover:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sora2-watermark-remover:latest
+    container_name: watermark-remover
+    
+    # 如果有 NVIDIA GPU，取消注释以下部分
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    
+    volumes:
+      # 挂载输入输出目录
+      - ./input:/app/input
+      - ./output:/app/output
+      # 挂载模型缓存（避免重复下载）
+      - model-cache:/root/.cache
+    
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - PYTHONUNBUFFERED=1
+    
+    # 使用命令行模式
+    # 可以通过 docker-compose run 覆盖此命令
+    command: python remwm.py --help
+    
+    stdin_open: true
+    tty: true
+
+volumes:
+  model-cache:
+    driver: local

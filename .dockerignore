@@ -1,0 +1,61 @@
+# Git 相关
+.git
+.gitignore
+.github
+
+# Python 缓存
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv
+
+# Conda 环境
+.conda/
+
+# IDE 相关
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 测试和覆盖率
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 输入输出目录（在容器内动态挂载）
+input/
+output/
+
+# 文档
+*.md
+!README.md
+
+# Windows 特定
+Thumbs.db
+desktop.ini
+
+# macOS 特定
+.DS_Store
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 安装脚本（不需要在容器内）
+install_windows.bat
+install_windows.ps1
+setup.ps1
+setup.sh
+create_shortcut.ps1

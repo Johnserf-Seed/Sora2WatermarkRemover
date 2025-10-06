@@ -1,0 +1,64 @@
+# Dockerfile for AMD GPU (ROCm)
+FROM rocm/pytorch:rocm6.0_ubuntu22.04_py3.10_pytorch_2.1.1
+
+WORKDIR /app
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    git \
+    wget \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+# 升级 pip
+RUN python -m pip install --upgrade pip
+
+# 复制依赖文件
+COPY requirements.txt* ./
+COPY environment.yml* ./
+
+# 安装 Python 依赖
+RUN pip install --no-cache-dir \
+    numpy \
+    tqdm \
+    loguru \
+    click \
+    pillow \
+    opencv-python-headless \
+    PyQt6 \
+    transformers \
+    iopaint \
+    pyyaml \
+    psutil
+
+# PyTorch 已经在基础镜像中包含（ROCm 版本）
+
+# 复制应用代码
+COPY *.py ./
+COPY *.yml ./
+COPY *.md ./
+
+# 下载 LaMA 模型
+RUN iopaint download --model lama
+
+# 创建目录
+RUN mkdir -p /app/input /app/output
+
+# 设置环境变量
+ENV QT_QPA_PLATFORM=offscreen
+ENV DISPLAY=:99
+ENV HSA_OVERRIDE_GFX_VERSION=10.3.0
+
+EXPOSE 8080
+
+CMD ["python", "remwm.py", "--help"]
